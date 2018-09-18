@@ -1,0 +1,44 @@
+apiVersion: certmanager.k8s.io/v1alpha1
+kind: Certificate
+metadata:
+  name: yourapplication-prod-tls-cert
+  namespace: yourapplication
+spec:
+  secretName: yourapplication-prod-tls-cert
+  issuerRef:
+    name: letsencrypt-prod
+    kind: ClusterIssuer
+  commonName: yourapplication.yourorganization.gg
+  dnsNames:
+  - yourapplication.yourorganization.gg
+  acme:
+    config:
+    - http01:
+        ingress: yourapplication
+      domains:
+      - yourapplication.yourorganization.gg
+---
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: yourapplication
+  namespace: yourapplication
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: yourapplication
+  labels:
+    app: yourapplication
+spec:
+  tls:
+  - hosts:
+    - yourapplication.yourorganization.gg
+    secretName: yourapplication-prod-tls-cert
+  rules:
+  - host: yourapplication.yourorganization.gg
+    http:
+      paths:
+      - backend:
+          serviceName: yourapplication-backend
+          servicePort: 8000
+  backend:
+    serviceName: yourapplication-backend
+    servicePort: 8000
