@@ -1,0 +1,9 @@
+https://docs.docker.com/machine/get-started/#create-a-machine
+
+docker-machine create --driver hyperv --hyperv-virtual-switch "DockerNAT" <name>
+eval $(docker-machine env <name>)
+docker-machine ssh <name>
+
+
+make network adapter external on hyperv
+
